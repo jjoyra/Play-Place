@@ -233,8 +233,8 @@ public class DataLoader {
     @Bean
     public CommandLineRunner SongHistoryDataLoad(UserRepository userRepository, VillageRepository villageRepository) {
         return args -> {
-            long count = userRepository.count();
-            if(count == 1) {
+            long count = songHistoryRepository.count();
+            if(count == 0) {
                 redisTemplate.getConnectionFactory().getConnection().flushAll();
 
                 Users user = userRepository.findById(1L).get();
@@ -243,15 +243,24 @@ public class DataLoader {
                     if(i % 500 == 0) {
                         log.debug("create song history: {}", i);
                     }
-                    Optional<Village> village = villageRepository.findById(i);
-                    createRandomSongHistory(user, village.get());
+//                    Optional<Village> village = villageRepository.findById(i);
+//                    createRandomSongHistory(user, village.get());
+//
+//                    createStaticSongHistory(user, village.get(), 45);
+                    Optional<Village> villageOptional = villageRepository.findById(i);
 
-                    createStaticSongHistory(user, village.get(), 45);
+                    if (villageOptional.isPresent()) {
+                        Village village = villageOptional.get();
+                        createRandomSongHistory(user, village);
+                        createStaticSongHistory(user, village, 45);
+                    } else {
+                        log.warn("Village not found for id: {}", i);
+                    }
                 }
 
-                songService.getAreaStatistics();
-                songService.getTimezoneStatistics();
-                songService.getWeatherStatistics();
+//                songService.getAreaStatistics();
+//                songService.getTimezoneStatistics();
+//                songService.getWeatherStatistics();
 
                 log.debug("create data done");
             }
