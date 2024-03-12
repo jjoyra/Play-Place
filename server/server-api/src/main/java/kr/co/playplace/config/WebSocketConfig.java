@@ -1,7 +1,6 @@
 package kr.co.playplace.config;
 
 import kr.co.playplace.common.security.handler.StompConnectInterceptor;
-import kr.co.playplace.common.security.handler.WebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -13,7 +12,6 @@ import org.springframework.web.socket.config.annotation.*;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final WebSocketHandler webSocketHandler;
     private final StompConnectInterceptor stompConnectInterceptor;
 
     @Override

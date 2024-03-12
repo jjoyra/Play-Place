@@ -15,7 +15,6 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.JwtException;
@@ -31,12 +30,12 @@ public class StompConnectInterceptor implements ChannelInterceptor {
     private final JwtUtil jwtUtil;
     private final UserQueryService userQueryService;
 
+    // webSocket을 통해 들어온 요청이 처리되기 전에 실행된다.
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-        String sessionId = (String) message.getHeaders().get("simpSessionId");
 
+        // webSocket 연결 시 헤더의 jwt token 검증
         if(StompCommand.CONNECT.equals(accessor.getCommand())) {
             String token = accessor.getFirstNativeHeader("Authorization");
 
